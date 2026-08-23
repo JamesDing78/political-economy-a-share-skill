@@ -107,7 +107,3 @@ A股政治经济学 + 供应链卡脖子研究 Skill。强制证据分层、反�
 
 - 供应链卡脖子理论灵感来源于 Serenity（@aleabitoreddit）公开分享
 - 本仓库为 A 股政治经济学增强版，非官方关联
-
-## License
-
-MIT License
