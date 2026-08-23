@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.token
+*.secret
+auth-state.json
+cookies.json
+data/private/
+data/paid/
+data/production/
+node_modules/
+.DS_Store
