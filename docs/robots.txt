@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jamesding78.github.io/political-economy-a-share-skill/sitemap.xml

@@ -1,0 +1,20 @@
+# 政策雷达：A股政策与产业研究公开站
+
+## 这是什么
+这是一个公开的投资研究信息服务与方法框架，研究链路为：政策事实 -> 政治经济学研判 -> 供应链卡脖子六步法 -> 产业与公司验证 -> 反证与可信度。
+
+## 如何阅读
+- 事实层记录原始来源、机构、日期、统计口径和数据。
+- 分析判断说明资源配置、执行主体、政策工具和产业传导。
+- 结论层只给研究优先级、支持证据、反证、未验证假设和失效条件。
+- 官媒热度仅作为线索，不等同于政策力度。
+- 公开示例是非实时快照，待核验内容不能视为当前市场事实。
+
+## 公开入口
+- 首页：https://jamesding78.github.io/political-economy-a-share-skill/
+- 机器可读研究摘要：https://jamesding78.github.io/political-economy-a-share-skill/research-summary.html
+- 方法文件：https://github.com/JamesDing78/political-economy-a-share-skill/blob/main/SKILL.md
+- 公开案例：https://github.com/JamesDing78/political-economy-a-share-skill/tree/main/examples
+
+## 使用边界
+本项目不提供个性化投资建议、买卖指令、代客交易或收益承诺。金融股暂不纳入公开研究范围。
