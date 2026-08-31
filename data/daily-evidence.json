@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-31T09:01:51.135Z",
+  "generatedAt": "2026-08-31T14:10:49.479Z",
   "asOf": "2026-08-31",
   "sourceRegistry": [
     {
@@ -141,7 +141,7 @@
       "sourceUrl": "https://www.stats.gov.cn/sj/sjjd/202608/t20260827_1965130.html",
       "sourceLevel": "A",
       "industry": "宏观数据、工业、消费、投资和价格数据",
-      "fetchedAt": "2026-08-31T09:01:49.253Z",
+      "fetchedAt": "2026-08-31T14:10:46.503Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -169,7 +169,7 @@
       "sourceUrl": "http://zwgls.mof.gov.cn/ywgg/202608/t20260828_3996291.htm",
       "sourceLevel": "A",
       "industry": "财政政策、国债、专项资金、税费政策",
-      "fetchedAt": "2026-08-31T09:01:49.670Z",
+      "fetchedAt": "2026-08-31T14:10:47.886Z",
       "fetchStatus": "ok",
       "admittedLevel": "A"
     },
@@ -197,7 +197,7 @@
       "sourceUrl": "http://zwgls.mof.gov.cn/ywgg/202608/t20260826_3996127.htm",
       "sourceLevel": "A",
       "industry": "财政政策、国债、专项资金、税费政策",
-      "fetchedAt": "2026-08-31T09:01:49.670Z",
+      "fetchedAt": "2026-08-31T14:10:47.887Z",
       "fetchStatus": "ok",
       "admittedLevel": "A"
     },
@@ -225,7 +225,7 @@
       "sourceUrl": "http://zwgls.mof.gov.cn/ywgg/202608/t20260825_3996062.htm",
       "sourceLevel": "A",
       "industry": "财政政策、国债、专项资金、税费政策",
-      "fetchedAt": "2026-08-31T09:01:49.670Z",
+      "fetchedAt": "2026-08-31T14:10:47.887Z",
       "fetchStatus": "ok",
       "admittedLevel": "A"
     },
@@ -253,7 +253,7 @@
       "sourceUrl": "https://zwgls.mof.gov.cn/ywgg/202608/t20260828_3996292.htm",
       "sourceLevel": "A",
       "industry": "国债发行、续发行、财政融资安排",
-      "fetchedAt": "2026-08-31T09:01:50.089Z",
+      "fetchedAt": "2026-08-31T14:10:48.504Z",
       "fetchStatus": "ok",
       "admittedLevel": "A"
     },
@@ -281,7 +281,7 @@
       "sourceUrl": "https://zwgls.mof.gov.cn/ywgg/202608/t20260826_3996147.htm",
       "sourceLevel": "A",
       "industry": "国债发行、续发行、财政融资安排",
-      "fetchedAt": "2026-08-31T09:01:50.089Z",
+      "fetchedAt": "2026-08-31T14:10:48.504Z",
       "fetchStatus": "ok",
       "admittedLevel": "A"
     },
@@ -309,7 +309,7 @@
       "sourceUrl": "https://www.ndrc.gov.cn/xxgk/zcfb/tz/202512/t20251230_1402851.html",
       "sourceLevel": "A",
       "industry": "设备更新、智能终端、工业设备、资源循环利用",
-      "fetchedAt": "2026-08-31T09:01:50.423Z",
+      "fetchedAt": "2026-08-31T14:10:48.805Z",
       "fetchStatus": "ok",
       "admittedLevel": "A"
     },
@@ -337,7 +337,7 @@
       "sourceUrl": "https://www.gov.cn/zhengce/202608/content_7079223.htm",
       "sourceLevel": "A",
       "industry": "国务院政策、国务院常务会议、政策解读",
-      "fetchedAt": "2026-08-31T09:01:43.485Z",
+      "fetchedAt": "2026-08-31T14:10:43.416Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -365,7 +365,7 @@
       "sourceUrl": "http://scyxs.mofcom.gov.cn/xfpyjhx/index.html",
       "sourceLevel": "A",
       "industry": "商务政策、外贸、消费、服务贸易、外资",
-      "fetchedAt": "2026-08-31T09:01:44.500Z",
+      "fetchedAt": "2026-08-31T14:10:44.641Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -393,7 +393,7 @@
       "sourceUrl": "https://www.pbc.gov.cn/goutongjiaoliu/113456/113469/2026082816463825521/index.html",
       "sourceLevel": "A",
       "industry": "货币政策、金融市场、信贷、流动性",
-      "fetchedAt": "2026-08-31T09:01:44.805Z",
+      "fetchedAt": "2026-08-31T14:10:44.901Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -421,7 +421,7 @@
       "sourceUrl": "https://www.pbc.gov.cn/goutongjiaoliu/113456/113469/2026082809193480410/index.html",
       "sourceLevel": "A",
       "industry": "货币政策、金融市场、信贷、流动性",
-      "fetchedAt": "2026-08-31T09:01:44.805Z",
+      "fetchedAt": "2026-08-31T14:10:44.901Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -449,7 +449,7 @@
       "sourceUrl": "https://www.csrc.gov.cn/xiamen/c104096/c7655086/content.shtml",
       "sourceLevel": "A",
       "industry": "资本市场制度、上市公司监管、融资制度",
-      "fetchedAt": "2026-08-31T09:01:45.302Z",
+      "fetchedAt": "2026-08-31T14:10:45.279Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -477,7 +477,7 @@
       "sourceUrl": "https://www.stats.gov.cn/sj/sjjd/202608/t20260827_1965127.html",
       "sourceLevel": "A",
       "industry": "宏观数据、工业、消费、投资和价格数据",
-      "fetchedAt": "2026-08-31T09:01:49.253Z",
+      "fetchedAt": "2026-08-31T14:10:46.503Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -505,7 +505,7 @@
       "sourceUrl": "https://www.gov.cn/zhengce/index.htm",
       "sourceLevel": "A",
       "industry": "国务院政策、政策背景",
-      "fetchedAt": "2026-08-31T09:01:50.089Z",
+      "fetchedAt": "2026-08-31T14:10:48.505Z",
       "fetchStatus": "metadata",
       "admittedLevel": "B"
     },
@@ -533,7 +533,7 @@
       "sourceUrl": "https://www.stats.gov.cn/szst/",
       "sourceLevel": "A",
       "industry": "宏观数据、农业、工业、消费、投资",
-      "fetchedAt": "2026-08-31T09:01:50.089Z",
+      "fetchedAt": "2026-08-31T14:10:48.505Z",
       "fetchStatus": "metadata",
       "admittedLevel": "B"
     },
@@ -561,7 +561,7 @@
       "sourceUrl": "https://www.news.cn/politics/20260826/f9bd8e27c5ac40299f236c570a98abcb/c.html",
       "sourceLevel": "B",
       "industry": "时政要闻、国务院会议、宏观政策线索",
-      "fetchedAt": "2026-08-31T09:01:43.790Z",
+      "fetchedAt": "2026-08-31T14:10:43.966Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -589,7 +589,7 @@
       "sourceUrl": "https://www.ndrc.gov.cn/fggz/202604/t20260430_1405007_ext.html",
       "sourceLevel": "A",
       "industry": "工业、能源电力、电子信息、物流、医疗、节能降碳",
-      "fetchedAt": "2026-08-31T09:01:50.612Z",
+      "fetchedAt": "2026-08-31T14:10:49.066Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -617,7 +617,7 @@
       "sourceUrl": "https://wap.miit.gov.cn/jgsj/xgj/wjfb/art/2026/art_616aad2c6b1547b7a01422b0a419070d.html",
       "sourceLevel": "A",
       "industry": "工业互联网、制造业数字化、平台、数据、安全",
-      "fetchedAt": "2026-08-31T09:01:50.884Z",
+      "fetchedAt": "2026-08-31T14:10:49.227Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     },
@@ -645,7 +645,7 @@
       "sourceUrl": "https://fjca.miit.gov.cn/xwdt/bsyw/art/2026/art_f325d5fe373141a28b31a6fa43377a5a.html",
       "sourceLevel": "A",
       "industry": "人工智能、信息通信、算力网络、智能体",
-      "fetchedAt": "2026-08-31T09:01:51.133Z",
+      "fetchedAt": "2026-08-31T14:10:49.477Z",
       "fetchStatus": "ok",
       "admittedLevel": "B"
     }

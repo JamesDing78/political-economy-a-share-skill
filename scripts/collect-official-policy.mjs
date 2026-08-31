@@ -270,10 +270,21 @@ function buildSnapshot(events) {
   return { generatedAt: new Date().toISOString(), asOf: today, sourceRegistry, status: todayEvents.length ? '今日公开信息已采集' : '今日无新增公开信息', headline: summary.title, brief: { judgement: summary.text, judgementDetail: '每日公开摘要必须区分 A 级原始政策、B 级权威线索和历史背景；重复消息按政府机关原文优先，媒体只作线索。', counter: '历史政策、待解析日期和资金下达信息只能作为背景；仍需项目清单、招投标、公司公告、财报和现金流交叉验证。', next: '优先核验近 30 天官方文件、项目/资金执行明细、上市公司订单公告和最新财务质量。' }, events: curatedEvents };
 }
 async function writeJsonFiles(snapshot) {
-  const isRepoRoot = path.basename(root) === 'github-public-repo';
-  const files = isRepoRoot
-    ? [path.join(root, 'data', 'daily-evidence.json'), path.join(root, 'docs', 'data', 'daily-evidence.json')]
-    : [path.join(root, 'data', 'daily-evidence.json'), path.join(root, 'github-public-repo', 'docs', 'data', 'daily-evidence.json')];
+  const candidates = [
+    path.join(root, 'data', 'daily-evidence.json'),
+    path.join(root, 'docs', 'data', 'daily-evidence.json'),
+    path.join(root, 'github-public-repo', 'docs', 'data', 'daily-evidence.json')
+  ];
+  const files = [];
+  for (const file of candidates) {
+    const parent = path.dirname(file);
+    try {
+      await fs.access(parent);
+      files.push(file);
+    } catch {
+      if (file === candidates[0] || file === candidates[1]) files.push(file);
+    }
+  }
   await Promise.all(files.map(async (file) => { await fs.mkdir(path.dirname(file), { recursive: true }); await fs.writeFile(file, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8'); }));
 }
 
