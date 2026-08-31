@@ -4,7 +4,7 @@ A 股政治经济学 + 供应链卡脖子研究 Skill。强制证据分层、反
 
 > 这是投资研究工具和分析框架，不是投资建议、荐股服务或收益承诺。
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-免费研究站-1f7a63)](https://jamesding78.github.io/political-economy-a-share-skill/)
+[![公开研究站](https://img.shields.io/badge/公开研究站-Firebase-1f7a63)](https://research-stock-c8cd9.web.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-111827.svg)](LICENSE)
 
 ## 这个仓库解决什么问题
@@ -55,7 +55,7 @@ A 股政治经济学 + 供应链卡脖子研究 Skill。强制证据分层、反
 
 ### 阅读公开研究站
 
-打开 [GitHub Pages 免费研究站](https://jamesding78.github.io/political-economy-a-share-skill/)。
+打开 [政策雷达公开研究站](https://research-stock-c8cd9.web.app/)。GitHub Pages 仅作为方法仓库的开源说明入口，正式公开摘要以 Firebase 站点为准。
 
 公开站只展示方法、免费案例和代表性研究，不加载私有行情接口、完整观察名单或付费报告。
 

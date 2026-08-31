@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://research-stock-c8cd9.web.app/sitemap.xml

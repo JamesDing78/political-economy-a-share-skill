@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jamesding78.github.io/political-economy-a-share-skill/sitemap.xml
+User-agent: Baiduspider
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+Sitemap: https://research-stock-c8cd9.web.app/sitemap.xml

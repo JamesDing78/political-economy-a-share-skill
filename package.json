@@ -1,0 +1,10 @@
+{
+  "name": "research-stock-public-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fetch": "node scripts/collect-official-policy.mjs",
+    "build": "node scripts/build-static-site.mjs"
+  }
+}

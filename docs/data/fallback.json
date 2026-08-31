@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-08-25T00:00:00.000Z",
+  "asOf": "常驻主线",
+  "status": "静态重点主线池",
+  "headline": "今日暂无高权重（A/B级）部委级文件时，展示近7日仍处执行期的核心政策主线。",
+  "brief": {
+    "judgement": "当前展示常驻静态重点主线池，只作为空状态兜底。",
+    "judgementDetail": "必须继续回到政策原文、执行时间表、资金端和公司公告核验。",
+    "counter": "没有新增 A/B 级文件时，不把历史政策包装成今日新闻。"
+  },
+  "events": [
+    {
+      "id": "fallback-equipment-renewal",
+      "title": "设备更新与以旧换新执行主线",
+      "grade": "A",
+      "source": "国家发展改革委 / 财政部",
+      "sourceLevel": "A",
+      "publishedAt": "2026-04-30",
+      "ageDays": 0,
+      "isToday": false,
+      "displayInDaily": false,
+      "displayInWeekly": true,
+      "poolTheme": "设备更新",
+      "industry": "设备更新、工业设备、消费品更新",
+      "read": "跟踪资金下达、地方执行、招投标、订单公告与回款节奏。",
+      "desc": "常驻静态重点主线。",
+      "confidence": "中",
+      "confidenceNote": "常驻主线仅用于空状态兜底，不等同于当天新闻。",
+      "sourceUrl": "https://www.ndrc.gov.cn/fggz/202604/t20260430_1405007_ext.html",
+      "fetchStatus": "fallback",
+      "policyAudit": {
+        "funding": "超长期特别国债资金支持设备更新，重点看项目清单和资金拨付。",
+        "cycle": "执行期内持续跟踪，采购和验收节奏决定公司兑现。",
+        "risk": "项目落地和付款周期可能滞后，需看中标公告和现金流。"
+      }
+    },
+    {
+      "id": "fallback-ai-ict",
+      "title": "人工智能+信息通信底座主线",
+      "grade": "B",
+      "source": "工业和信息化部",
+      "sourceLevel": "A",
+      "publishedAt": "2026-06-11",
+      "ageDays": 0,
+      "isToday": false,
+      "displayInDaily": false,
+      "displayInWeekly": true,
+      "poolTheme": "半导体/算力",
+      "industry": "人工智能、信息通信、算力网络",
+      "read": "跟踪网络建设、算力基础设施、客户部署、订单和收入确认。",
+      "desc": "常驻静态重点主线。",
+      "confidence": "中",
+      "confidenceNote": "常驻主线仅用于空状态兜底，不等同于当天新闻。",
+      "sourceUrl": "https://fjca.miit.gov.cn/xwdt/bsyw/art/2026/art_f325d5fe373141a28b31a6fa43377a5a.html",
+      "fetchStatus": "fallback",
+      "policyAudit": {
+        "funding": "未直接等同财政补贴，重点看运营商和行业客户资本开支。",
+        "cycle": "2026-2028 指引期，短期需找招标和订单证据。",
+        "risk": "AI 热度不能替代部署、验收和收入确认。"
+      }
+    },
+    {
+      "id": "fallback-arrears",
+      "title": "清理拖欠企业账款主线",
+      "grade": "A",
+      "source": "中国政府网",
+      "sourceLevel": "A",
+      "publishedAt": "2026-08-22",
+      "ageDays": 0,
+      "isToday": false,
+      "displayInDaily": false,
+      "displayInWeekly": true,
+      "poolTheme": "财税改革",
+      "industry": "企业账款、现金流、民营经济",
+      "read": "跟踪应收账款改善、现金流修复和订单回款质量。",
+      "desc": "常驻静态重点主线。",
+      "confidence": "中",
+      "confidenceNote": "常驻主线仅用于空状态兜底，不等同于当天新闻。",
+      "sourceUrl": "https://www.gov.cn/zhengce/index.htm",
+      "fetchStatus": "fallback",
+      "policyAudit": {
+        "funding": "核心不是新增补贴，而是回款和财政支付纪律。",
+        "cycle": "执行进度需看地方清欠公告和企业财报。",
+        "risk": "清欠承诺不等同现金到账，应收账款天数仍需核验。"
+      }
+    }
+  ]
+}

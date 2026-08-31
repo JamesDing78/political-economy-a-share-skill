@@ -12,3 +12,4 @@ data/paid/
 data/production/
 node_modules/
 .DS_Store
+.firebase/
