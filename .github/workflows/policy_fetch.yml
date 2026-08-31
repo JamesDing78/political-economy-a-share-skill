@@ -28,7 +28,7 @@ jobs:
       - name: Collect official policy evidence
         env:
           FIREBASE_PROJECT_ID: research-stock-c8cd9
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RESEARCH_STOCK_C8CD9 }}
         run: npm run fetch
 
       - name: Check static site files
@@ -38,6 +38,6 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_RESEARCH_STOCK_C8CD9 }}'
           projectId: research-stock-c8cd9
           channelId: live
