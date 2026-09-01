@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="620" viewBox="0 0 1180 620" role="img" aria-labelledby="title desc">
+  <title id="title">从政策发现到股票核验的流程</title>
+  <desc id="desc">展示热榜、官网、交易所公告、财报和反证剔除之间的研究流程。</desc>
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#102c27"/>
+      <stop offset=".62" stop-color="#173f36"/>
+      <stop offset="1" stop-color="#2f536f"/>
+    </linearGradient>
+    <filter id="soft" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#071814" flood-opacity=".25"/>
+    </filter>
+  </defs>
+  <rect width="1180" height="620" rx="30" fill="url(#base)"/>
+  <g opacity=".24" fill="none" stroke="#b7e3d4">
+    <path d="M70 500C260 320 326 402 508 236S830 122 1088 214"/>
+    <path d="M82 236C238 176 352 296 500 210S826 88 1070 126"/>
+    <path d="M96 420C286 386 386 456 558 344s302-158 514-96"/>
+  </g>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif" filter="url(#soft)">
+    <rect x="70" y="84" width="220" height="150" rx="22" fill="#f8fbf9"/>
+    <text x="100" y="130" font-size="18" font-weight="900" fill="#0f4f42">热榜 / 检索</text>
+    <text x="100" y="164" font-size="13" fill="#52635d">只识别关注度，不进入政策事实。</text>
+    <text x="100" y="196" font-size="13" font-weight="800" fill="#167c63">输出：待回溯主题</text>
+    <rect x="360" y="84" width="220" height="150" rx="22" fill="#f8fbf9"/>
+    <text x="390" y="130" font-size="18" font-weight="900" fill="#0f4f42">官网原文</text>
+    <text x="390" y="164" font-size="13" fill="#52635d">确认日期、级别、工具和执行主体。</text>
+    <text x="390" y="196" font-size="13" font-weight="800" fill="#167c63">输出：A/B事实</text>
+    <rect x="650" y="84" width="220" height="150" rx="22" fill="#f8fbf9"/>
+    <text x="680" y="130" font-size="18" font-weight="900" fill="#0f4f42">交易所公告</text>
+    <text x="680" y="164" font-size="13" fill="#52635d">查代码、公司名、问询、停复牌。</text>
+    <text x="680" y="196" font-size="13" font-weight="800" fill="#167c63">输出：具体对象</text>
+    <rect x="940" y="84" width="170" height="150" rx="22" fill="#f8fbf9"/>
+    <text x="970" y="130" font-size="18" font-weight="900" fill="#0f4f42">财报反证</text>
+    <text x="970" y="164" font-size="13" fill="#52635d">订单、毛利、现金流、估值。</text>
+    <text x="970" y="196" font-size="13" font-weight="800" fill="#167c63">输出：保留/剔除</text>
+  </g>
+  <g stroke="#a9d5c6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M306 160h36"/>
+    <path d="M332 148l16 12-16 12"/>
+    <path d="M596 160h36"/>
+    <path d="M622 148l16 12-16 12"/>
+    <path d="M886 160h36"/>
+    <path d="M912 148l16 12-16 12"/>
+  </g>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="70" y="330" font-size="28" font-weight="900" fill="#f3fbf8">页面应该展示什么？</text>
+    <text x="70" y="374" font-size="16" fill="#cbe3da">不是把所有来源堆上来，而是把每条信息放进“能否帮助选股研究”的路径里。</text>
+    <g transform="translate(70 424)">
+      <rect width="1040" height="88" rx="18" fill="#f6f8f6" opacity=".96"/>
+      <text x="28" y="35" font-size="15" font-weight="900" fill="#0f4f42">页面展示顺序</text>
+      <text x="28" y="62" font-size="14" fill="#43544f">今日事实为空时，继续展示发现雷达和近7日主题；只有直接公告证据成立时，才进入研究对象。</text>
+      <text x="790" y="35" font-size="15" font-weight="900" fill="#8b6116">防误导规则</text>
+      <text x="790" y="62" font-size="14" fill="#5b4a2a">热度 ≠ 政策力度 ≠ 公司利润</text>
+    </g>
+  </g>
+</svg>

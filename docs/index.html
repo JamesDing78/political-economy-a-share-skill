@@ -11,12 +11,13 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="zh_CN">
   <meta property="og:title" content="A股政策核验与产业研究摘要｜政策雷达">
-  <meta property="og:image" content="https://research-stock-c8cd9.web.app/og-default.svg">
+  <meta property="og:image" content="https://research-stock-c8cd9.web.app/assets/policy-workbench.svg">
   <meta property="og:description" content="先核验政策事实，再验证产业兑现与公司财务，公开展示每日摘要、来源链接和核验提示。">
   <meta property="og:url" content="https://research-stock-c8cd9.web.app/">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="政策雷达 · A股政策与产业研究页面">
   <meta name="twitter:description" content="A 股政策、产业链与公司研究公开摘要。">
+  <meta name="twitter:image" content="https://research-stock-c8cd9.web.app/assets/policy-workbench.svg">
   <link rel="sitemap" type="application/xml" href="sitemap.xml">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","url":"https://research-stock-c8cd9.web.app/","name":"政策雷达 · A股研究页面","inLanguage":"zh-CN"},{"@type":"WebPage","name":"A股政策核验与产业研究摘要｜政策雷达","dateModified":"2026-08-31","author":{"@type":"Organization","name":"政策雷达"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://research-stock-c8cd9.web.app/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"这个网站提供什么？","acceptedAnswer":{"@type":"Answer","text":"它整理政策、产业链和 A 股公司的公开信息，帮助读者建立核验顺序，不构成投资建议。"}},{"@type":"Question","name":"官媒热度能否代表政策力度？","acceptedAnswer":{"@type":"Answer","text":"不能。媒体热度只作为线索，政策级别、政策工具、执行主体和财政或订单数据需要分别核验。"}},{"@type":"Question","name":"页面信息每天都会更新吗？","acceptedAnswer":{"@type":"Answer","text":"页面每日更新公开信息摘要；个别来源延迟时，以页面显示时间为准。"}}]}]}</script>
   <meta name="theme-color" content="#f6f8f6">
@@ -80,16 +81,21 @@
           <div><span>已核验A股标的</span><strong id="counter-stocks">--</strong></div>
         </div>
       </div>
-      <aside class="signal-card" aria-label="研究状态">
-        <div class="signal-top"><span>公开研究状态</span><span class="status-dot">●</span></div>
-        <div class="signal-title">证据优先</div>
-        <div class="signal-grid">
-          <div><span>今日摘要</span><strong>官网原文链接</strong></div>
-          <div><span>A股核验</span><strong>股票 / 公告 / 财务</strong></div>
-          <div><span>使用提示</span><strong>仅供核验</strong></div>
-          <div><span>更新状态</span><strong>每日公开快照</strong></div>
+      <aside class="hero-visual-stack" aria-label="研究状态与视觉摘要">
+        <figure class="hero-visual">
+          <img src="assets/policy-workbench.svg" width="1200" height="820" alt="政策雷达工作台，包含今日事实、发现雷达、候选核验和反证流程">
+        </figure>
+        <div class="signal-card" aria-label="研究状态">
+          <div class="signal-top"><span>公开研究状态</span><span class="status-dot">●</span></div>
+          <div class="signal-title">证据优先</div>
+          <div class="signal-grid">
+            <div><span>今日摘要</span><strong>官网原文链接</strong></div>
+            <div><span>A股核验</span><strong>股票 / 公告 / 财务</strong></div>
+            <div><span>使用提示</span><strong>仅供核验</strong></div>
+            <div><span>更新状态</span><strong>每日公开快照</strong></div>
+          </div>
+          <div class="signal-foot">最后更新时间：等待同步</div>
         </div>
-        <div class="signal-foot">最后更新时间：等待同步</div>
       </aside>
     </section>
 
@@ -196,9 +202,25 @@
       </div>
     </section>
 
+    <section id="visual-method" class="section shell media-section">
+      <div class="section-heading"><div><p class="eyebrow">03 · 可视化研究路径</p><h2>热榜怎样变成可核验的选股研究？</h2></div><span class="plain-note">视频演示研究链路，图片保留核验步骤</span></div>
+      <div class="media-layout">
+        <figure class="media-frame media-video">
+          <video autoplay muted loop playsinline preload="metadata" poster="assets/policy-workbench.svg" aria-label="政策、热榜、公告和财务核验节点循环演示视频">
+            <source src="assets/research-radar-loop.mp4" type="video/mp4">
+          </video>
+          <figcaption>动态演示：热榜只进入发现层，必须回溯官网、交易所公告和财报反证。</figcaption>
+        </figure>
+        <figure class="media-frame media-flow">
+          <img src="assets/research-flow.svg" width="1180" height="620" alt="热榜、官网原文、交易所公告、财报反证之间的研究流程图">
+          <figcaption>流程图：没有公告或财报证据时，只保留研究目标，不升级为股票结论。</figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section id="analysis" class="section section-muted">
       <div class="shell">
-        <div class="section-heading"><div><p class="eyebrow">03 · 近7日摘要拆解</p><h2>这些公开信息对应哪些 A 股核验点？</h2></div><span class="plain-note">从近7日筛选池延伸到可核验对象</span></div>
+        <div class="section-heading"><div><p class="eyebrow">04 · 近7日摘要拆解</p><h2>这些公开信息对应哪些 A 股核验点？</h2></div><span class="plain-note">从近7日筛选池延伸到可核验对象</span></div>
         <div id="analysis-loading-status" class="loading-status">拆解生成中</div>
         <div id="analysis-grid" class="analysis-grid">
           <article class="analysis-card"><span>每日同步</span><h3>摘要同步后展示 A 股核验点</h3><p>若今日暂无 A/B 级信息，页面会优先展示近3日摘要回顾。</p></article>
@@ -207,7 +229,7 @@
     </section>
 
     <section id="topics" class="section shell">
-      <div class="section-heading"><div><p class="eyebrow">04 · 公开研究对象</p><h2>近7日摘要关联的研究对象</h2></div><span class="plain-note">对应筛选池信息和具体股票核验项</span></div>
+      <div class="section-heading"><div><p class="eyebrow">05 · 公开研究对象</p><h2>近7日摘要关联的研究对象</h2></div><span class="plain-note">对应筛选池信息和具体股票核验项</span></div>
       <div class="selection-logic" aria-label="研究对象筛选逻辑">
         <strong>研究对象如何产生</strong>
         <p>页面先读取近7日 A/B 级公开摘要，再检查是否直接出现 A 股代码、公司名或上市公司公告证据；只有同时具备“具体对象”和“可核验证据标签”的项目才会显示。只有政策主题或行业方向时，不展示代表股票。</p>
@@ -219,7 +241,7 @@
     </section>
 
     <section id="faq" class="section shell">
-      <div class="section-heading"><div><p class="eyebrow">05 · 公开说明</p><h2>热线问题问与答</h2></div></div>
+      <div class="section-heading"><div><p class="eyebrow">06 · 公开说明</p><h2>热线问题问与答</h2></div></div>
       <div class="faq-grid">
         <details><summary>这个网站是不是荐股？</summary><p>不是。它整理公开信息和核验线索，不构成个性化投资建议或收益承诺。</p></details>
         <details><summary>官媒热度能否代表政策力度？</summary><p>不能。媒体热度只作为线索，政策级别、工具、执行主体和产业数据需要分别核验。</p></details>
