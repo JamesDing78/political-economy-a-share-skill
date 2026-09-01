@@ -50,6 +50,12 @@ const sources = [
   { id: 'miit-ai-ict-2026', grade: 'B', source: '工业和信息化部', sourceLevel: 'A', industry: '人工智能、信息通信、算力网络、智能体', url: 'https://fjca.miit.gov.cn/xwdt/bsyw/art/2026/art_f325d5fe373141a28b31a6fa43377a5a.html', fallbackTitle: '“人工智能+信息通信”创新发展实施意见（2026—2028年）', read: '政策方向聚焦信息通信智能化升级和人工智能底座。研究上要从网络、算力、应用场景和治理能力四条线拆分验证。', counter: '反证：AI 主题热度高，但没有订单、部署场景和收入确认时不能提升公司研究等级。' }
 ];
 
+const discoverySources = [
+  { id: 'tophub-finance', source: 'TopHub 财经', sourceLevel: 'D', url: 'https://tophub.today/c/finance', industry: '财经热榜、市场关注、舆情发现' },
+  { id: 'tophub-news', source: 'TopHub 综合', sourceLevel: 'D', url: 'https://tophub.today/c/news', industry: '综合热榜、政策舆情、公众关注' },
+  { id: 'tophub-ai', source: 'TopHub AI', sourceLevel: 'D', url: 'https://tophub.today/c/ai', industry: 'AI 热榜、算力、应用和产业关注' }
+];
+
 function decodeBuffer(buffer, contentType = '') {
   const charset = contentType.match(/charset=([^;]+)/i)?.[1]?.trim().toLowerCase();
   const candidates = charset ? [charset, 'utf-8', 'gb18030'] : ['utf-8', 'gb18030'];
@@ -73,11 +79,122 @@ function sameHost(url, baseUrl) {
 }
 const financeKeywords = ['财经', '经济', '金融', '财政', '货币', '信贷', '利率', '债券', '国债', '专项债', '融资', '资金', '税费', '资本市场', '证券', '股票', '上市公司', '交易所', '公告', '停牌', '复牌', '监管问询', '并购重组', 'IPO', '再融资', '工业', '制造业', '设备更新', '以旧换新', '人工智能', '工业互联网', '算力', '数据', '消费', '投资', '外贸', '服务贸易', '外资', '民营经济', '企业账款', '价格', '就业', '进出口', '房地产', '住房公积金', '统计数据', 'PMI', 'CPI', 'PPI', '社融', 'M2'];
 const exclusionKeywords = ['生态环境损害责任追究', '党政领导干部', '责任追究办法', '功勋', '奖章', '荣誉称号', '英雄航天员', '地质灾害', '防汛', '台风', '暴雨', '考试', '成绩查询', '资格考试', '招聘', '任免', '摄影', '书画', '展览', '工资总额信息披露', '所监管企业', '文学人才', '残障文学', '课题研究征集', '预算评审中心', '课题研究', '征集公告'];
+const hotDiscoveryExclusions = ['优惠券', '内部线报', '节点', '热榜官方数据', '开放平台', 'API', '写作', '聊天', '助手', '导航', '投稿', '登录', '注册', '广告', '排行榜工具'];
 function isPolicyRelevant(value) {
   const text = String(value || '');
   if (!text || exclusionKeywords.some((keyword) => text.includes(keyword))) return false;
   return financeKeywords.some((keyword) => text.includes(keyword));
 }
+function isDiscoveryRelevant(value) {
+  const text = String(value || '');
+  if (!isPolicyRelevant(text) || hotDiscoveryExclusions.some((keyword) => text.includes(keyword))) return false;
+  if (discoveryTheme(text) !== '其他') return true;
+  return ['A股', '港股', '美股', '数字货币', '房地产', '大宗商品', '油价', '金价'].some((keyword) => text.includes(keyword));
+}
+
+function discoveryTheme(value) {
+  const text = String(value || '');
+  if (['人工智能', 'AI', '算力', '芯片', '半导体', '数据', '工业互联网', '信息通信'].some((keyword) => text.includes(keyword))) return 'AI通信';
+  if (['财政', '国债', '专项债', '资金', '利率', '信贷', '人民银行', '金融', '资本市场', '券商'].some((keyword) => text.includes(keyword))) return '财政金融';
+  if (['消费', '以旧换新', '外贸', '出口', '进口', '服务贸易', '商务部', '补贴'].some((keyword) => text.includes(keyword))) return '消费外贸';
+  if (['证监会', '交易所', '上市公司', '并购', '重组', 'IPO', '再融资', '监管'].some((keyword) => text.includes(keyword))) return '交易所监管';
+  return '其他';
+}
+
+function discoveryActionFor(value) {
+  const theme = discoveryTheme(value);
+  const actions = {
+    'AI通信': '先回溯工信部、发改委、运营商招标和上市公司公告，再核验 AI 服务器、光模块、网络设备、软件订单和现金流。',
+    '财政金融': '先回溯财政部、人民银行、证监会原文，再核验券商成交/承销、银行息差、保险投资收益和财政资金形成实物工作量。',
+    '消费外贸': '先回溯商务部、海关、地方补贴和渠道数据，再核验家电/消费/外贸公司的出货、库存、毛利率和回款。',
+    '交易所监管': '先查交易所、证监会和上市公司公告原文，再核验具体证券代码、停复牌、监管问询、并购重组或再融资事项。',
+    '其他': '先找到 A/B 级官网原文或上市公司公告，再决定是否进入选股研究；只有热度时不展示为公司结论。'
+  };
+  return actions[theme];
+}
+
+function normalizeHotTitle(value) {
+  return String(value || '').replace(/^\s*\d+\s*/, '').replace(/\s+/g, ' ').trim();
+}
+
+function dedupeSignals(signals) {
+  const seen = new Set();
+  return signals.filter((signal) => {
+    const key = normalizeHotTitle(signal.title).replace(/[\s，。、“”‘’《》：:：-]+/g, '').slice(0, 36);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function signalsFromOfficialEvents(events) {
+  return dedupeSignals(events
+    .filter((event) => event.fetchStatus !== 'error' && event.ageDays !== null && event.ageDays >= 0 && event.ageDays <= 30)
+    .map((event, index) => {
+      const text = `${event.title || ''} ${event.industry || ''} ${event.read || ''} ${event.desc || ''}`;
+      const theme = discoveryTheme(text);
+      return {
+        id: `official-signal-${event.id || index}`,
+        title: event.title,
+        desc: event.read || event.desc || '官方公开信息派生出的研究线索。',
+        source: event.source,
+        sourceUrl: event.sourceUrl,
+        sourceLevel: event.sourceLevel || event.grade,
+        publishedAt: event.publishedAt || null,
+        theme,
+        confidence: event.confidence || '待复核',
+        heat: event.isToday ? 90 : Math.max(40, 82 - Number(event.ageDays || 0) * 4),
+        discoveryOnly: true,
+        verifyAction: discoveryActionFor(text),
+        counter: event.counter || '只有主题线索不能直接推导到上市公司，需要公告、财报和现金流验证。'
+      };
+    }))
+    .slice(0, 8);
+}
+
+function extractDiscoveryItems(html, source) {
+  const items = [];
+  const anchorPattern = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
+  let match;
+  while ((match = anchorPattern.exec(html)) && items.length < 120) {
+    const href = match[1].match(/href=["']([^"']+)["']/i)?.[1];
+    const title = normalizeHotTitle(compactText(match[2]));
+    if (!href || !title || title.length < 4 || !isDiscoveryRelevant(title)) continue;
+    const url = absoluteUrl(href, source.url);
+    items.push({
+      id: `${source.id}-${items.length}`,
+      title,
+      source: source.source,
+      sourceUrl: url,
+      sourceLevel: source.sourceLevel,
+      industry: source.industry,
+      theme: discoveryTheme(title),
+      heat: Math.max(40, 88 - items.length * 3),
+      publishedAt: null,
+      confidence: '发现线索',
+      discoveryOnly: true,
+      desc: '热榜只用于发现研究方向，不能替代官方政策、交易所公告或上市公司公告。',
+      verifyAction: discoveryActionFor(title),
+      counter: '热榜代表关注度，不代表政策力度、订单兑现或公司利润。'
+    });
+  }
+  return items;
+}
+
+async function fetchDiscoverySignals(officialEvents) {
+  const officialSignals = signalsFromOfficialEvents(officialEvents);
+  const hotSignals = [];
+  for (const source of discoverySources) {
+    try {
+      const response = await fetch(source.url, { headers: { 'User-Agent': 'Mozilla/5.0 Research-Stock topic discovery', Accept: 'text/html,application/xhtml+xml' } });
+      if (!response.ok) continue;
+      const html = decodeBuffer(await response.arrayBuffer(), response.headers.get('content-type') || '');
+      hotSignals.push(...extractDiscoveryItems(html, source).slice(0, 5));
+    } catch {}
+  }
+  return dedupeSignals([...officialSignals, ...hotSignals]).slice(0, 12);
+}
+
 
 function normalizeDateToken(token) {
   const match = String(token || '').match(/(\d{4})[-年/.](\d{1,2})[-月/.](\d{1,2})/);
@@ -262,12 +379,12 @@ function dedupeAndSort(events) {
   }
   return result;
 }
-function buildSnapshot(events) {
+function buildSnapshot(events, discoverySignals = []) {
   const curatedEvents = dedupeAndSort(admitPolicies(events));
   const okEvents = curatedEvents.filter((event) => event.fetchStatus !== 'error');
   const todayEvents = okEvents.filter((event) => event.isToday && event.displayInDaily !== false);
   const summary = dailySummaryFromEvents(curatedEvents);
-  return { generatedAt: new Date().toISOString(), asOf: today, sourceRegistry, status: todayEvents.length ? '今日公开信息已采集' : '今日无新增公开信息', headline: summary.title, brief: { judgement: summary.text, judgementDetail: '每日公开摘要必须区分 A 级原始政策、B 级权威线索和历史背景；重复消息按政府机关原文优先，媒体只作线索。', counter: '历史政策、待解析日期和资金下达信息只能作为背景；仍需项目清单、招投标、公司公告、财报和现金流交叉验证。', next: '优先核验近 30 天官方文件、项目/资金执行明细、上市公司订单公告和最新财务质量。' }, events: curatedEvents };
+  return { generatedAt: new Date().toISOString(), asOf: today, sourceRegistry, discoverySources, status: todayEvents.length ? '今日公开信息已采集' : '今日无新增公开信息', headline: summary.title, brief: { judgement: summary.text, judgementDetail: '每日公开摘要必须区分 A 级原始政策、B 级权威线索和历史背景；重复消息按政府机关原文优先，媒体只作线索。热榜和检索结果只进入发现层，不进入政策事实计数。', counter: '历史政策、待解析日期、热榜关注和资金下达信息只能作为背景；仍需项目清单、招投标、公司公告、财报和现金流交叉验证。', next: '优先核验近 30 天官方文件、项目/资金执行明细、上市公司订单公告和最新财务质量。' }, discoverySignals, events: curatedEvents };
 }
 async function writeJsonFiles(snapshot) {
   const candidates = [
@@ -343,10 +460,11 @@ async function main() {
       }
     }
   }
-  const snapshot = buildSnapshot(events);
+  const discoverySignals = await fetchDiscoverySignals(events);
+  const snapshot = buildSnapshot(events, discoverySignals);
   await writeJsonFiles(snapshot);
   if (!firestoreToken) firestoreToken = await accessTokenFromServiceAccount();
   const writes = [await putFirestoreDocument(snapshot.asOf, snapshot), await putFirestoreDocument('latest', snapshot)];
-  console.log(JSON.stringify({ asOf: snapshot.asOf, events: events.length, ok: events.filter((event) => event.fetchStatus === 'ok').length, dailyShown: snapshot.events.filter((event) => event.isToday && event.displayInDaily !== false).length, sourcesConfigured: sourceRegistry.length, firestore: writes }, null, 2));
+  console.log(JSON.stringify({ asOf: snapshot.asOf, events: events.length, ok: events.filter((event) => event.fetchStatus === 'ok').length, dailyShown: snapshot.events.filter((event) => event.isToday && event.displayInDaily !== false).length, discoverySignals: snapshot.discoverySignals.length, sourcesConfigured: sourceRegistry.length, firestore: writes }, null, 2));
 }
 main().catch((error) => { console.error(error); process.exit(1); });

@@ -422,6 +422,29 @@ h3 { line-height: 1.25; }
 .path-block small + small { margin-top: 4px; }
 @media (max-width: 768px) { .selection-gate { grid-template-columns: 1fr; margin: 0 16px 14px; } }
 
+.discovery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.discovery-card { display: grid; gap: 12px; min-height: 100%; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 28px rgba(24, 57, 47, .05); }
+.discovery-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.discovery-top span, .discovery-top strong { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 8px; border-radius: 7px; font-size: 11px; font-weight: 900; }
+.discovery-top span { color: var(--green-dark); background: #e1f2ec; }
+.discovery-top strong { color: #8b6116; background: #fbf0d7; }
+.discovery-card h3 { margin: 0; font-size: 17px; line-height: 1.35; letter-spacing: 0; }
+.discovery-card h3 a { color: var(--green-dark); }
+.discovery-card p { margin: 0; color: #52635d; font-size: 13px; line-height: 1.65; }
+.discovery-logic { margin-bottom: 14px; background: #fff; }
+.candidate-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.candidate-strip a { display: grid; gap: 5px; min-height: 118px; padding: 11px; color: inherit; background: #f8fbf9; border: 1px solid #dbe8e2; border-radius: 10px; }
+.candidate-strip a:hover { border-color: var(--green); box-shadow: 0 8px 20px rgba(15, 118, 92, .1); }
+.candidate-strip span, .candidate-strip strong, .candidate-strip small { display: block; }
+.candidate-strip span { color: var(--green); font-size: 11px; font-weight: 850; }
+.candidate-strip strong { color: var(--green-dark); font-size: 14px; }
+.candidate-strip small { color: var(--muted); font-size: 11px; line-height: 1.45; }
+.discovery-empty { grid-column: 1 / -1; }
+@media (max-width: 900px) { .discovery-grid { grid-template-columns: 1fr; } }
+@media (max-width: 680px) { .discovery-card { padding: 15px; } .candidate-strip { grid-template-columns: 1fr; } .candidate-strip a { min-height: 0; } }
+[data-theme="dark"] .discovery-card, [data-theme="dark"] .discovery-logic { background: var(--white); }
+[data-theme="dark"] .candidate-strip a { background: #182925; border-color: #29433b; }
+
 .candidate-box { margin: 0 20px 14px; padding: 14px; background: #fff; border: 1px solid #d8e5df; border-radius: 12px; }
 .candidate-box h4 { margin: 0 0 6px; color: var(--green-dark); font-size: 13px; }
 .candidate-box > p { margin: 0 0 12px; color: var(--muted); font-size: 12px; }

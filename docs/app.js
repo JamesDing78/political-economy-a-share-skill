@@ -497,6 +497,50 @@
     const text = events.map((event) => `${event.title} ${event.source} ${event.industry} ${event.read} ${event.desc}`).join(' ');
     return stockMappings.filter((mapping) => mapping.keywords.some((keyword) => text.includes(keyword)));
   }
+  function discoverySignalsForSnapshot(snapshot, poolEvents = []) {
+    const directSignals = Array.isArray(snapshot?.discoverySignals) ? snapshot.discoverySignals : [];
+    if (directSignals.length) return directSignals;
+    return poolEvents.map((event, index) => ({
+      id: `pool-signal-${event.id || index}`,
+      title: event.title,
+      desc: event.read || event.desc || '近7日官方摘要派生出的研究线索。',
+      source: event.source,
+      sourceUrl: event.sourceUrl,
+      sourceLevel: event.sourceLevel || event.grade,
+      publishedAt: event.publishedAt || event.poolDate || '',
+      theme: event.poolTheme || themeForEvent(event),
+      heat: event.poolStatus === 'today' ? 88 : 64,
+      verifyAction: '先回溯官方原文，再查交易所公告、公司公告、订单、收入、现金流和估值。',
+      counter: event.counter || '只有主题线索不能直接推导到上市公司，需要公告、财报和现金流验证。'
+    })).slice(0, 8);
+  }
+  function signalCandidates(signal) {
+    return mappingsFor([signal]).flatMap((mapping) => mapping.stocks
+      .filter((stock) => /^\d{6}$/.test(String(stock.code || '')))
+      .slice(0, 2)
+      .map((stock) => ({ mapping, stock }))).slice(0, 4);
+  }
+  function renderDiscoveryRadar(snapshot, poolEvents = []) {
+    const grid = document.querySelector('#discovery-grid');
+    if (!grid) return;
+    const signals = discoverySignalsForSnapshot(snapshot, poolEvents)
+      .filter((signal) => signal && signal.title && signalCandidates(signal).length > 0)
+      .sort((a, b) => Number(b.heat || 0) - Number(a.heat || 0))
+      .slice(0, 8);
+    setLoadingStatus('#discovery-loading-status', signals.length ? `发现雷达已生成：${signals.length} 条可进入核验的研究线索` : '发现雷达已生成：暂无可映射到核验对象的线索', signals.length ? 'ready' : 'empty');
+    grid.innerHTML = signals.length ? signals.map((signal, index) => {
+      const candidates = signalCandidates(signal);
+      return `<article class="discovery-card">
+        <div class="discovery-top"><span>${String(index + 1).padStart(2, '0')} · ${escapeHtml(signal.theme || '其他')}</span><strong>${escapeHtml(signal.sourceLevel || '发现')}</strong></div>
+        <h3><a href="${escapeHtml(signal.sourceUrl || '#')}" target="_blank" rel="noreferrer">${escapeHtml(signal.title)}</a></h3>
+        <p>${escapeHtml(signal.desc || '热榜和检索结果只作为发现线索，不进入政策事实计数。')}</p>
+        <div class="selection-note"><strong>回溯动作</strong><span>${escapeHtml(signal.verifyAction || '先查 A/B 级官网原文，再查公告、财报和现金流。')}</span></div>
+        <div class="candidate-strip">${candidates.map(({ mapping, stock }) => `<a href="${escapeHtml(stock.url)}" target="_blank" rel="noreferrer"><span>${escapeHtml(mapping.title)}</span><strong>${escapeHtml(stock.code)} ${escapeHtml(stock.name)}</strong><small>${escapeHtml(stock.reason)}</small></a>`).join('')}</div>
+        <div class="fail-line"><strong>不通过条件</strong>${escapeHtml(signal.counter || '只有热度、主题或行业方向时，不形成个股结论。')}</div>
+      </article>`;
+    }).join('') : '<article class="discovery-card discovery-empty"><div class="discovery-top"><span>发现雷达</span><strong>不强行展示</strong></div><h3>暂无可进入核验的热议题</h3><p>未抓到可映射到公告、财报或公司核验路径的热榜/检索线索，页面不会为了数量堆积信息。</p></article>';
+    applySearchHighlight();
+  }
   function eventTitleFor(mapping, events) {
     const event = events.find((item) => mapping.keywords.some((keyword) => `${item.title} ${item.source} ${item.industry} ${item.read} ${item.desc}`.includes(keyword)));
     return event ? event.title : '等待当日摘要匹配';
@@ -723,9 +767,9 @@
     const results = await Promise.all(candidates.map((dateText) => loadSnapshotByDate(dateText).catch(() => null)));
     return results.filter(Boolean).slice(0, 3);
   }
-  function updateHeroCounters(state, poolEvents, topicObjects) {
+  function updateHeroCounters(state, poolEvents, topicObjects, discoverySignals = []) {
     setText('#counter-today', `${state.todayAbCount}`);
-    setText('#counter-themes', `${new Set(poolEvents.map((event) => event.quickTag || event.poolTheme).filter(Boolean)).size}`);
+    setText('#counter-themes', `${new Set([...poolEvents.map((event) => event.quickTag || event.poolTheme), ...discoverySignals.map((signal) => signal.theme)].filter(Boolean)).size}`);
     setText('#counter-stocks', `${topicObjects.length}`);
   }
   function updatePosterHead(snapshot, state, poolEvents) {
@@ -791,6 +835,7 @@
     const displayOrigin = origin === 'cloud' ? '每日同步' : origin;
     const poolEvents = weeklyAbEvents(snapshot);
     const filteredPoolEvents = applyPoolFilters(poolEvents);
+    const discoverySignals = discoverySignalsForSnapshot(snapshot, poolEvents);
     const state = buildDataState(snapshot, poolEvents, filteredPoolEvents);
     setText('#brief-date', `${snapshot?.asOf || '待同步'} · ${displayOrigin}`);
     renderSyncStatus(snapshot, state);
@@ -802,9 +847,10 @@
     if (signal) signal.textContent = `最后更新时间：${snapshot?.generatedAt || '待同步'} · ${snapshot?.status || '未知'} · 今日A/B ${state.todayAbCount} · 近7日池 ${state.poolCount} · 官方来源读到 ${state.okCount}/${state.totalCount}`;
     const trust = document.querySelector('.mini-card strong');
     if (trust) trust.textContent = `${state.hasTodayAb ? '今日新增' : '今日无新增'} / ${displayOrigin}`;
+    renderDiscoveryRadar(snapshot, poolEvents);
     renderAnalysis(filteredPoolEvents);
     const topicObjects = qualifyingTopicObjects(filteredPoolEvents);
-    updateHeroCounters(state, poolEvents, topicObjects);
+    updateHeroCounters(state, poolEvents, topicObjects, discoverySignals);
     updatePosterHead(snapshot, state, poolEvents);
     renderTopics(filteredPoolEvents);
     renderSummaryCards(filteredPoolEvents, snapshot?.asOf || selectedDate, poolEvents.length);
@@ -881,6 +927,7 @@
   }
   async function loadSnapshot(manual = false) {
     setLoadingStatus('#summary-loading-status', '摘要加载中', 'loading');
+    setLoadingStatus('#discovery-loading-status', '发现雷达生成中', 'loading');
     setLoadingStatus('#analysis-loading-status', '拆解生成中', 'loading');
     setLoadingStatus('#topics-loading-status', '研究对象匹配中', 'loading');
     if (manual) {
@@ -904,6 +951,7 @@
       setText('#counter-evidence', `数据暂不可用：${error.message}`);
       setDailyCompareText('今日 vs 昨日：等待历史数据', 'neutral');
       setLoadingStatus('#summary-loading-status', '摘要加载失败', 'empty');
+      setLoadingStatus('#discovery-loading-status', '发现雷达暂停：等待摘要', 'empty');
       setLoadingStatus('#analysis-loading-status', '拆解生成暂停：等待摘要', 'empty');
       setLoadingStatus('#topics-loading-status', '研究对象匹配暂停：等待摘要', 'empty');
     }
