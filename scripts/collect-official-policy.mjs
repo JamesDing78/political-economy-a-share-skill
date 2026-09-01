@@ -285,11 +285,22 @@ function dailySummaryFromEvents(events) {
   const todayOriginal = todayEvents.filter((event) => event.grade === 'A').length;
   const todayBriefing = todayEvents.filter((event) => event.grade === 'B').length;
   const todayMarket = todayEvents.filter((event) => event.grade === 'C').length;
+  const weeklyAb = events.filter((event) => event.fetchStatus !== 'error' && ['A', 'B'].includes(event.grade) && event.displayInWeekly === true);
+  const weeklyOriginal = weeklyAb.filter((event) => event.grade === 'A').length;
+  const weeklyBriefing = weeklyAb.filter((event) => event.grade === 'B').length;
+  const weeklyThemeSet = new Set(weeklyAb.map((event) => event.industry || '其他'));
   if (todayEvents.length) {
     return {
       mode: 'today',
       title: `今日公开信息 ${todayEvents.length} 条：A级原文 ${todayOriginal} 条，B级线索 ${todayBriefing} 条，C级市场信息 ${todayMarket} 条`,
       text: todayOriginal ? '今日摘要包含当天发布的官方原始来源；B级和C级信息只作补充线索。' : '今日未采到当天 A 级部委原文，但已采到当天权威公开线索和市场运行信息；它们可以进入每日摘要，同时必须标注来源级别和回溯要求。'
+    };
+  }
+  if (weeklyAb.length) {
+    return {
+      mode: 'weekly',
+      title: `今日未采到当天新发官方原文，近 7 日已持续跟踪 ${weeklyAb.length} 条 A/B 级信息（A级原文 ${weeklyOriginal} 条，B级线索 ${weeklyBriefing} 条）`,
+      text: `近 7 日滚动池保留 ${weeklyAb.length} 条 A/B 级信息，覆盖 ${weeklyThemeSet.size} 个研究主题；它们来自官方或权威来源，是可进入核验的研究方向，不是空页面。仍须回溯原文并核对公告、订单、收入和现金流。`
     };
   }
   return {
