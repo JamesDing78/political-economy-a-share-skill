@@ -183,7 +183,17 @@
     return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai' }).format(base);
   }
   function todayAbEvents(events) {
-    return events.filter((event) => event.isToday && event.displayInDaily !== false && isDisplayablePolicy(event));
+    const directToday = events.filter((event) => event.isToday && event.displayInDaily !== false && isDisplayablePolicy(event));
+    if (directToday.length) return directToday;
+    // 当天未抓到可确认的 A/B 原文时，回退到近7日滚动池里最新一条，避免“今日”误报为0；
+    // 该条会标注为“近7日沿用”，不与真正当天原文混淆。
+    const weekly = events.filter((event) => event.fetchStatus !== 'error' && ['A', 'B'].includes(event.grade) && event.displayInWeekly === true && isDisplayablePolicy(event));
+    if (!weekly.length) return [];
+    const latestDate = weekly.reduce((max, event) => {
+      const date = String(event.publishedAt || '').slice(0, 10);
+      return date > max ? date : max;
+    }, '');
+    return weekly.filter((event) => String(event.publishedAt || '').slice(0, 10) === latestDate).slice(0, 3);
   }
   function eventDateText(event, snapshot) {
     const value = event?.publishedAt || event?.date || snapshot?.asOf || selectedDate;
@@ -562,10 +572,12 @@
   }
   function qualifyingTopicObjects(poolEvents) {
     return mappingsFor(poolEvents).flatMap((mapping) => mapping.stocks.map((stock) => {
+      const hasConcreteCode = /^\d{6}$/.test(String(stock.code || '')) && stock.name && !stock.name.includes('先查');
+      if (!hasConcreteCode) return null;
       const evidenceEvents = stockEvidenceEvents(mapping, stock, poolEvents);
       const supportedTags = evidenceTags.filter((tag) => evidenceSupport(mapping, stock, tag));
-      return { mapping, stock, evidenceEvents, supportedTags };
-    })).filter((item) => item.evidenceEvents.length > 0 && item.supportedTags.length > 0).slice(0, 10);
+      return { mapping, stock, evidenceEvents, supportedTags, verified: evidenceEvents.length > 0 };
+    })).filter(Boolean).slice(0, 12);
   }
   function renderAnalysis(poolEvents) {
     const grid = document.querySelector('#analysis-grid');
@@ -606,14 +618,17 @@
     if (!topicGrid) return;
     const objects = qualifyingTopicObjects(poolEvents);
     setLoadingStatus('#topics-loading-status', objects.length ? `研究对象已匹配：${objects.length} 个符合条件对象` : '研究对象匹配完成：暂无符合条件对象', objects.length ? 'ready' : 'empty');
-    topicGrid.innerHTML = objects.length ? objects.map(({ mapping, stock, evidenceEvents, supportedTags }, index) => {
+    topicGrid.innerHTML = objects.length ? objects.map(({ mapping, stock, evidenceEvents, supportedTags, verified }, index) => {
       const primaryEvidence = evidenceEvents[0];
+      const statusLabel = verified ? '已有摘要证据' : '可核验候选';
+      const evidenceText = verified ? `近7日摘要中直接出现 ${escapeHtml(stock.code)} / ${escapeHtml(stock.name)}，且命中证据：${escapeHtml(supportedTags.join('、')) || '待补'}。` : `由政策主题映射出的可核验候选股 ${escapeHtml(stock.code)} ${escapeHtml(stock.name)}；点击打开公告检索，按订单、收入、现金流、估值逐项验证，未达标即剔除。`;
+      const directLine = verified && primaryEvidence ? `<div class="choke-line"><strong>直接证据</strong><a href="${escapeHtml(primaryEvidence.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(primaryEvidence.title)}</a></div>` : `<div class="choke-line"><strong>直接证据</strong><span>待回溯公告核验：打开 ${escapeHtml(stock.market || '公告检索')} 检索 ${escapeHtml(stock.code)} 的最新公告、订单、财报、现金流和风险提示。</span></div>`;
       return `
       <article class="topic-card">
-        <div class="topic-top"><h3>${String(index + 1).padStart(2, '0')} · ${escapeHtml(stock.name)}</h3><span class="topic-status">${escapeHtml(mapping.title)}</span></div>
+        <div class="topic-top"><h3>${String(index + 1).padStart(2, '0')} · ${escapeHtml(stock.name)}</h3><span class="topic-status">${escapeHtml(statusLabel)} · ${escapeHtml(mapping.title)}</span></div>
         <p>${escapeHtml(stock.reason)}</p>
-        <div class="selection-note"><strong>入选条件</strong><span>近7日摘要中直接出现 ${escapeHtml(stock.code)} / ${escapeHtml(stock.name)}，且至少命中一个可核验证据标签：${escapeHtml(supportedTags.join('、'))}。</span></div>
-        <div class="choke-line"><strong>直接证据</strong><a href="${escapeHtml(primaryEvidence.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(primaryEvidence.title)}</a></div>
+        <div class="selection-note"><strong>入选条件</strong><span>${evidenceText}</span></div>
+        ${directLine}
         <div class="stock-row compact"><div class="stock-item"><a href="${escapeHtml(stock.url)}" target="_blank" rel="noreferrer"><strong>${escapeHtml(stock.code)}</strong><small>${escapeHtml(stock.market || '公告检索')} · 打开后按代码检索公告、订单、财务和风险提示。</small></a>${renderEvidenceTags(mapping, stock)}</div></div>
         <div class="fail-line"><strong>不通过条件</strong>${escapeHtml(mapping.fail)}</div>
       </article>`;
@@ -700,6 +715,8 @@
     const events = Array.isArray(snapshot?.events) ? snapshot.events : [];
     const todayAb = todayAbEvents(events);
     const todayAbCount = todayAb.length;
+    const directTodayCount = events.filter((event) => event.isToday && event.displayInDaily !== false && isDisplayablePolicy(event)).length;
+    const todayIsFallback = directTodayCount === 0 && todayAbCount > 0;
     const todayACount = todayAb.filter((event) => event.grade === 'A').length;
     const todayBCount = todayAb.filter((event) => event.grade === 'B').length;
     const todayCount = events.filter((event) => event.isToday && event.fetchStatus !== 'error' && event.displayInDaily !== false).length;
@@ -712,6 +729,8 @@
       totalCount: events.length,
       todayCount,
       todayAbCount,
+      directTodayCount,
+      todayIsFallback,
       todayACount,
       todayBCount,
       poolCount: poolEvents.length,
@@ -725,11 +744,13 @@
     const current = state || buildDataState(snapshot);
     const time = formatSyncTime(snapshot?.generatedAt);
     const monthDay = current.asOf && /^\d{4}-\d{2}-\d{2}/.test(current.asOf) ? current.asOf.slice(5) : current.asOf;
-    const text = current.hasTodayAb
-      ? `已同步今日（${monthDay}）A 级政策 ${current.todayACount} 条，B 级政策 ${current.todayBCount} 条 · ${time}`
-      : (current.hasPool
-        ? `今日暂无高权重（A/B级）部委级文件，当前展示近 7 日仍处执行期的核心政策主线 · ${time}`
-        : `今日暂无高权重（A/B级）部委级文件，当前展示常驻静态重点主线池 · ${time}`);
+    const text = current.todayIsFallback
+      ? `今日未确认到当天新发 A/B 级原文，已沿用近 7 日最新一条 A/B 级线索（${current.todayACount} 条 A / ${current.todayBCount} 条 B），近 7 日持续跟踪 ${current.poolCount} 条 · ${time}`
+      : (current.hasTodayAb
+        ? `已同步今日（${monthDay}）A 级政策 ${current.todayACount} 条，B 级政策 ${current.todayBCount} 条 · ${time}`
+        : (current.hasPool
+          ? `今日暂无高权重（A/B级）部委级文件，当前展示近 7 日仍处执行期的核心政策主线 · ${time}`
+          : `今日暂无高权重（A/B级）部委级文件，当前展示常驻静态重点主线池 · ${time}`));
     setText('#sync-status-text', text);
   }
   function clearLoadedWaitingText(state) {
