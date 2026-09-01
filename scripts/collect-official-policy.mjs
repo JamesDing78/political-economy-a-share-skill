@@ -120,6 +120,18 @@ function normalizeHotTitle(value) {
   return String(value || '').replace(/^\s*\d+\s*/, '').replace(/\s+/g, ' ').trim();
 }
 
+function resolveHotPublishedAt(value) {
+  const text = String(value || '');
+  // 热门媒体列表常带相对发布时间，只要命中“刚刚/N分钟前/N小时前/昨天”即视为当日线索
+  if (/(刚刚|[0-9]+分钟前|[0-9]+小时前)/.test(text)) return today;
+  if (/昨天/.test(text)) {
+    const yesterday = new Date(`${today}T00:00:00+08:00`);
+    yesterday.setDate(yesterday.getDate() - 1);
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai' }).format(yesterday);
+  }
+  return null;
+}
+
 function dedupeSignals(signals) {
   const seen = new Set();
   return signals.filter((signal) => {
@@ -173,7 +185,7 @@ function extractDiscoveryItems(html, source) {
       industry: source.industry,
       theme: discoveryTheme(title),
       heat: Math.max(40, 88 - items.length * 3),
-      publishedAt: null,
+      publishedAt: resolveHotPublishedAt(title),
       confidence: '发现线索',
       discoveryOnly: true,
       desc: '热榜只用于发现研究方向，不能替代官方政策、交易所公告或上市公司公告。',
@@ -201,7 +213,7 @@ function extractJsonDiscoveryItems(payload, source) {
       industry: source.industry,
       theme: discoveryTheme(title),
       heat: Math.max(40, 86 - items.length * 3),
-      publishedAt: raw?.display_time ? new Date(raw.display_time * 1000).toISOString().slice(0, 10) : null,
+      publishedAt: resolveHotPublishedAt(title) || (raw?.display_time ? new Date(raw.display_time * 1000).toISOString().slice(0, 10) : null),
       confidence: '发现线索',
       discoveryOnly: true,
       desc: '实时财经与全球市场快讯只用于发现题材方向，不能替代政策原文、交易所公告或上市公司公告。',
@@ -440,7 +452,11 @@ function buildSnapshot(events, discoverySignals = []) {
   const okEvents = curatedEvents.filter((event) => event.fetchStatus !== 'error');
   const todayEvents = okEvents.filter((event) => event.isToday && event.displayInDaily !== false);
   const summary = dailySummaryFromEvents(curatedEvents);
-  return { generatedAt: new Date().toISOString(), asOf: today, sourceRegistry, discoverySources, status: todayEvents.length ? '今日公开信息已采集' : '今日无新增公开信息', headline: summary.title, brief: { judgement: summary.text, judgementDetail: '每日公开摘要必须区分 A 级原始政策、B 级权威线索和历史背景；重复消息按政府机关原文优先，媒体只作线索。热榜和检索结果只进入发现层，不进入政策事实计数。', counter: '历史政策、待解析日期、热榜关注和资金下达信息只能作为背景；仍需项目清单、招投标、公司公告、财报和现金流交叉验证。', next: '优先核验近 30 天官方文件、项目/资金执行明细、上市公司订单公告和最新财务质量。' }, discoverySignals, events: curatedEvents };
+  const todaySignals = (discoverySignals || []).filter((signal) => signal && (signal.publishedAt || '').slice(0, 10) === today && signal.theme !== '其他');
+  const contentHeadline = todaySignals.length
+    ? `当日采集 ${todayEvents.length + todaySignals.length} 条：官方 A/B ${todayEvents.length} 条 + 当天题材线索 ${todaySignals.length} 条`
+    : summary.title;
+  return { generatedAt: new Date().toISOString(), asOf: today, sourceRegistry, discoverySources, status: todayEvents.length ? '今日公开信息已采集' : '今日无新增公开信息', headline: contentHeadline, brief: { judgement: summary.text, judgementDetail: '每日公开摘要必须区分 A 级原始政策、B 级权威线索和历史背景；重复消息按政府机关原文优先，媒体只作线索。热榜和检索结果只进入发现层，不进入政策事实计数。', counter: '历史政策、待解析日期、热榜关注和资金下达信息只能作为背景；仍需项目清单、招投标、公司公告、财报和现金流交叉验证。', next: '优先核验近 30 天官方文件、项目/资金执行明细、上市公司订单公告和最新财务质量。' }, discoverySignals, events: curatedEvents };
 }
 async function writeJsonFiles(snapshot) {
   const candidates = [

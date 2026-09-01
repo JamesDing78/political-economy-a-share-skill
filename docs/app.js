@@ -760,6 +760,9 @@
     const events = Array.isArray(snapshot?.events) ? snapshot.events : [];
     const todayAb = todayAbEvents(events);
     const todayAbCount = todayAb.length;
+    const asOf = snapshot?.asOf || selectedDate || '';
+    const todaySignalCount = (Array.isArray(snapshot?.discoverySignals) ? snapshot.discoverySignals : []).filter((signal) => signal && (signal.publishedAt || '').slice(0, 10) === asOf && signal.theme !== '其他').length;
+    const todayContentCount = todayAbCount + todaySignalCount;
     const directTodayCount = events.filter((event) => event.isToday && event.displayInDaily !== false && isDisplayablePolicy(event)).length;
     const todayIsFallback = directTodayCount === 0 && todayAbCount > 0;
     const todayACount = todayAb.filter((event) => event.grade === 'A').length;
@@ -767,13 +770,15 @@
     const todayCount = events.filter((event) => event.isToday && event.fetchStatus !== 'error' && event.displayInDaily !== false).length;
     const okCount = events.filter((event) => event.fetchStatus !== 'error').length;
     return {
-      asOf: snapshot?.asOf || selectedDate || '待同步',
+      asOf: asOf || '待同步',
       generatedAt: snapshot?.generatedAt || '',
       status: snapshot?.status || '未知',
       okCount,
       totalCount: events.length,
       todayCount,
       todayAbCount,
+      todaySignalCount,
+      todayContentCount,
       directTodayCount,
       todayIsFallback,
       todayACount,
@@ -789,13 +794,15 @@
     const current = state || buildDataState(snapshot);
     const time = formatSyncTime(snapshot?.generatedAt);
     const monthDay = current.asOf && /^\d{4}-\d{2}-\d{2}/.test(current.asOf) ? current.asOf.slice(5) : current.asOf;
-    const text = current.todayIsFallback
-      ? `今日未确认到当天新发 A/B 级原文，已沿用近 7 日最新一条 A/B 级线索（${current.todayACount} 条 A / ${current.todayBCount} 条 B），近 7 日持续跟踪 ${current.poolCount} 条 · ${time}`
-      : (current.hasTodayAb
-        ? `已同步今日（${monthDay}）A 级政策 ${current.todayACount} 条，B 级政策 ${current.todayBCount} 条 · ${time}`
-        : (current.hasPool
-          ? `今日暂无高权重（A/B级）部委级文件，当前展示近 7 日仍处执行期的核心政策主线 · ${time}`
-          : `今日暂无高权重（A/B级）部委级文件，当前展示常驻静态重点主线池 · ${time}`));
+    const text = (current.todayContentCount >= 10)
+      ? `今日已同步 ${monthDay} 当日采集 ${current.todayContentCount} 条（官方 A/B ${current.todayAbCount} 条 + 题材线索 ${current.todaySignalCount} 条），近 7 日持续跟踪 ${current.poolCount} 条 · ${time}`
+      : (current.todayIsFallback
+        ? `今日未确认到当天新发 A/B 级原文，已沿用近 7 日最新一条 A/B 级线索（${current.todayACount} 条 A / ${current.todayBCount} 条 B），近 7 日持续跟踪 ${current.poolCount} 条 · ${time}`
+        : (current.hasTodayAb
+          ? `已同步今日（${monthDay}）A 级政策 ${current.todayACount} 条，B 级政策 ${current.todayBCount} 条 · ${time}`
+          : (current.hasPool
+            ? `今日暂无高权重（A/B级）部委级文件，当前展示近 7 日仍处执行期的核心政策主线 · ${time}`
+            : `今日暂无高权重（A/B级）部委级文件，当前展示常驻静态重点主线池 · ${time}`)));
     setText('#sync-status-text', text);
   }
   function clearLoadedWaitingText(state) {
@@ -834,7 +841,7 @@
     return results.filter(Boolean).slice(0, 3);
   }
   function updateHeroCounters(state, poolEvents, topicObjects, discoverySignals = []) {
-    setText('#counter-today', `${state.todayAbCount}`);
+    setText('#counter-today', `${state.todayContentCount}`);
     setText('#counter-themes', `${new Set([...poolEvents.map((event) => event.quickTag || event.poolTheme), ...discoverySignals.map((signal) => signal.theme)].filter(Boolean)).size}`);
     setText('#counter-stocks', `${topicObjects.length}`);
   }
