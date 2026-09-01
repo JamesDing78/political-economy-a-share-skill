@@ -93,6 +93,20 @@
         { code: '601888', name: '中国中免', market: '上交所公告检索', reason: '输入代码 601888，核验消费复苏、客流、客单价和库存周转。', url: 'https://www.sse.com.cn/assortment/stock/list/info/announcement/' }
       ],
       fail: '如果只是促消费口号，缺少补贴落地、订单出货、客流或利润率改善，不进入高优先级。'
+    },
+    {
+      id: 'global-market',
+      keywords: ['油价', '原油', '美股', '港股', 'A股', '板块', '大涨', '涨停', '黄金', '金价', '美元', '汇率', '通胀', '业绩', '净利', '毛利率', '农业', '农产品', '粮食', '猪肉', '芯片', '半导体', '行情'],
+      title: '全球市场与热门题材',
+      angle: '近7日若出现能源、有色、贵金属、农业、半导体或全球市场行情，应核验价格是否传导到上市公司营收、毛利、库存和订单，再决定是否进入题材研究。',
+      stocks: [
+        { code: '601857', name: '中国石油', match: ['油价', '原油', '能源'], market: '上交所公告检索', reason: '输入代码 601857，核验油价与油气量价、上游成本、天然气和炼化利润。', url: 'https://www.sse.com.cn/assortment/stock/list/info/announcement/' },
+        { code: '600028', name: '中国石化', match: ['油价', '原油', '炼化'], market: '上交所公告检索', reason: '输入代码 600028，核验油价传导、炼化价差、成品油与化工毛利。', url: 'https://www.sse.com.cn/assortment/stock/list/info/announcement/' },
+        { code: '600547', name: '山东黄金', match: ['黄金', '金价', '贵金属'], market: '上交所公告检索', reason: '输入代码 600547，核验金价、产量、克金成本和矿山现金流。', url: 'https://www.sse.com.cn/assortment/stock/list/info/announcement/' },
+        { code: '000876', name: '新希望', match: ['猪肉', '生猪', '农业', '农产品', '粮食'], market: '深交所公告检索', reason: '输入代码 000876，核验生猪/饲料价格、成本、出栏量和现金流。', url: 'https://www.szse.cn/disclosure/listed/notice/index.html' },
+        { code: '002371', name: '北方华创', match: ['芯片', '半导体'], market: '深交所公告检索', reason: '输入代码 002371，核验半导体设备订单、客户验收、毛利率和资本开支。', url: 'https://www.szse.cn/disclosure/listed/notice/index.html' }
+      ],
+      fail: '如果只是行情涨幅或题材热度，缺少价格/订单/毛利/现金流的公司公告验证，不升级为个股结论。'
     }
   ];
 
@@ -504,8 +518,27 @@
     });
   }
   function mappingsFor(events) {
+    const themeToMappingId = {
+      'AI通信': 'ai-infra',
+      '财政金融': 'monetary-capital-market',
+      '消费外贸': 'trade-consumption',
+      '交易所监管': 'exchange-event'
+    };
     const text = events.map((event) => `${event.title} ${event.source} ${event.industry} ${event.read} ${event.desc}`).join(' ');
-    return stockMappings.filter((mapping) => mapping.keywords.some((keyword) => text.includes(keyword)));
+    const byTheme = stockMappings.filter((mapping) => events.some((event) => themeToMappingId[event.theme] === mapping.id));
+    const marketTheme = stockMappings.filter((mapping) => {
+      if (!events.some((event) => event.theme === '市场题材')) return false;
+      if (['油价', '原油', '黄金', '金价', '贵金属', '猪肉', '生猪', '农产品', '粮食'].some((k) => text.includes(k))) return mapping.id === 'global-market';
+      if (['业绩', '净利', '毛利率', '银行', '保险', '化债', '信贷', '金融', '利率'].some((k) => text.includes(k))) return mapping.id === 'monetary-capital-market';
+      if (['芯片', '半导体', '科技', 'AI', '算力'].some((k) => text.includes(k))) return mapping.id === 'ai-infra';
+      return false;
+    });
+    const marketFallback = events.some((event) => event.theme === '市场题材') ? stockMappings.filter((mapping) => mapping.id === 'global-market') : [];
+    const byKeyword = stockMappings.filter((mapping) => mapping.keywords.some((keyword) => text.includes(keyword)));
+    if (byTheme.length) return byTheme;
+    if (marketTheme.length) return marketTheme;
+    if (byKeyword.length) return byKeyword;
+    return marketFallback;
   }
   function discoverySignalsForSnapshot(snapshot, poolEvents = []) {
     const directSignals = Array.isArray(snapshot?.discoverySignals) ? snapshot.discoverySignals : [];
@@ -525,10 +558,22 @@
     })).slice(0, 8);
   }
   function signalCandidates(signal) {
+    const text = `${signal.title || ''} ${signal.source || ''} ${signal.industry || ''} ${signal.desc || ''}`;
+    // “其他”主题若只是榜单栏目名、纯热度话题或弱产业词，不给候选股，避免信息堆积
+    if (signal.theme === '其他') {
+      const weakOnly = ['数字货币', '金色财经', '智通财经', '第一财经', '财经', '股票', '证券', '今天', '为什么', '怎么', '如何', '什么'].some((k) => text.includes(k));
+      const concrete = ['油价', '原油', '黄金', '猪肉', '农产品', '粮食', '芯片', '半导体', '银行', '保险', '地产', '房地产', '化债', '信贷', '净利', '毛利率', '涉房', 'A股', '港股', '美股'].some((k) => text.includes(k));
+      if (weakOnly && !concrete) return [];
+    }
+    const matched = mappingsFor([signal]).flatMap((mapping) => mapping.stocks
+      .filter((stock) => /^\d{6}$/.test(String(stock.code || '')))
+      .filter((stock) => !stock.match || stock.match.some((keyword) => text.includes(keyword)))
+      .map((stock) => ({ mapping, stock })));
+    if (matched.length) return matched.slice(0, 3);
     return mappingsFor([signal]).flatMap((mapping) => mapping.stocks
       .filter((stock) => /^\d{6}$/.test(String(stock.code || '')))
       .slice(0, 2)
-      .map((stock) => ({ mapping, stock }))).slice(0, 4);
+      .map((stock) => ({ mapping, stock }))).slice(0, 2);
   }
   function renderDiscoveryRadar(snapshot, poolEvents = []) {
     const grid = document.querySelector('#discovery-grid');

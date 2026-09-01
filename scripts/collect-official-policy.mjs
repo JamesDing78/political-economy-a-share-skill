@@ -53,7 +53,9 @@ const sources = [
 const discoverySources = [
   { id: 'tophub-finance', source: 'TopHub 财经', sourceLevel: 'D', url: 'https://tophub.today/c/finance', industry: '财经热榜、市场关注、舆情发现' },
   { id: 'tophub-news', source: 'TopHub 综合', sourceLevel: 'D', url: 'https://tophub.today/c/news', industry: '综合热榜、政策舆情、公众关注' },
-  { id: 'tophub-ai', source: 'TopHub AI', sourceLevel: 'D', url: 'https://tophub.today/c/ai', industry: 'AI 热榜、算力、应用和产业关注' }
+  { id: 'tophub-ai', source: 'TopHub AI', sourceLevel: 'D', url: 'https://tophub.today/c/ai', industry: 'AI 热榜、算力、应用和产业关注' },
+  { id: 'yicai-news', source: '第一财经', sourceLevel: 'D', matching: ['/news/'], url: 'https://www.yicai.com/news/', industry: '财经媒体、公司业绩、行业题材、市场关注' },
+  { id: 'wscn-live', source: '华尔街见闻', sourceLevel: 'D', jsonMode: true, url: 'https://api-one-wscn.awtmt.com/apiv1/content/lives?channel=global-channel&limit=12', industry: '实时财经、全球市场、行情与题材' }
 ];
 
 function decodeBuffer(buffer, contentType = '') {
@@ -77,7 +79,7 @@ function sameHost(url, baseUrl) {
     return itemHost === baseHost || itemHost.endsWith(`.${baseHost}`);
   } catch { return false; }
 }
-const financeKeywords = ['财经', '经济', '金融', '财政', '货币', '信贷', '利率', '债券', '国债', '专项债', '融资', '资金', '税费', '资本市场', '证券', '股票', '上市公司', '交易所', '公告', '停牌', '复牌', '监管问询', '并购重组', 'IPO', '再融资', '工业', '制造业', '设备更新', '以旧换新', '人工智能', '工业互联网', '算力', '数据', '消费', '投资', '外贸', '服务贸易', '外资', '民营经济', '企业账款', '价格', '就业', '进出口', '房地产', '住房公积金', '统计数据', 'PMI', 'CPI', 'PPI', '社融', 'M2'];
+const financeKeywords = ['财经', '经济', '金融', '财政', '货币', '信贷', '利率', '债券', '国债', '专项债', '融资', '资金', '税费', '资本市场', '证券', '股票', '上市公司', '交易所', '公告', '停牌', '复牌', '监管问询', '并购重组', 'IPO', '再融资', '工业', '制造业', '设备更新', '以旧换新', '人工智能', '工业互联网', '算力', '数据', '消费', '投资', '外贸', '服务贸易', '外资', '民营经济', '企业账款', '价格', '就业', '进出口', '房地产', '住房公积金', '统计数据', 'PMI', 'CPI', 'PPI', '社融', 'M2', '油价', '原油', '美股', '港股', 'A股', '芯片', '半导体', '农业', '农产品', '粮食', '猪肉', '通胀', '业绩', '净利润', '净利', '毛利率', '净息差', '板块', '个股', '大涨', '跌', '涨停', '概念', '题材', '商品', '黄金', '金价', '美元', '汇率', '政策红利', '涉房', '化债', '转型', '商业航天', '行情', '收评', '复盘'];
 const exclusionKeywords = ['生态环境损害责任追究', '党政领导干部', '责任追究办法', '功勋', '奖章', '荣誉称号', '英雄航天员', '地质灾害', '防汛', '台风', '暴雨', '考试', '成绩查询', '资格考试', '招聘', '任免', '摄影', '书画', '展览', '工资总额信息披露', '所监管企业', '文学人才', '残障文学', '课题研究征集', '预算评审中心', '课题研究', '征集公告'];
 const hotDiscoveryExclusions = ['优惠券', '内部线报', '节点', '热榜官方数据', '开放平台', 'API', '写作', '聊天', '助手', '导航', '投稿', '登录', '注册', '广告', '排行榜工具'];
 function isPolicyRelevant(value) {
@@ -88,8 +90,7 @@ function isPolicyRelevant(value) {
 function isDiscoveryRelevant(value) {
   const text = String(value || '');
   if (!isPolicyRelevant(text) || hotDiscoveryExclusions.some((keyword) => text.includes(keyword))) return false;
-  if (discoveryTheme(text) !== '其他') return true;
-  return ['A股', '港股', '美股', '数字货币', '房地产', '大宗商品', '油价', '金价'].some((keyword) => text.includes(keyword));
+  return true;
 }
 
 function discoveryTheme(value) {
@@ -98,6 +99,7 @@ function discoveryTheme(value) {
   if (['财政', '国债', '专项债', '资金', '利率', '信贷', '人民银行', '金融', '资本市场', '券商'].some((keyword) => text.includes(keyword))) return '财政金融';
   if (['消费', '以旧换新', '外贸', '出口', '进口', '服务贸易', '商务部', '补贴'].some((keyword) => text.includes(keyword))) return '消费外贸';
   if (['证监会', '交易所', '上市公司', '并购', '重组', 'IPO', '再融资', '监管'].some((keyword) => text.includes(keyword))) return '交易所监管';
+  if (['油价', '原油', '美股', '港股', 'A股', '板块', '个股', '大涨', '跌', '涨停', '概念', '题材', '商品', '黄金', '金价', '美元', '汇率', '通胀', '行情', '收评', '复盘', '业绩', '净利', '毛利率'].some((keyword) => text.includes(keyword))) return '市场题材';
   return '其他';
 }
 
@@ -108,6 +110,7 @@ function discoveryActionFor(value) {
     '财政金融': '先回溯财政部、人民银行、证监会原文，再核验券商成交/承销、银行息差、保险投资收益和财政资金形成实物工作量。',
     '消费外贸': '先回溯商务部、海关、地方补贴和渠道数据，再核验家电/消费/外贸公司的出货、库存、毛利率和回款。',
     '交易所监管': '先查交易所、证监会和上市公司公告原文，再核验具体证券代码、停复牌、监管问询、并购重组或再融资事项。',
+    '市场题材': '先判断题材是否落到可核验产业，再回溯官方政策、行业数据或公司公告，核验涨价、业绩、订单、毛利和现金流；只有热度不构成个股结论。',
     '其他': '先找到 A/B 级官网原文或上市公司公告，再决定是否进入选股研究；只有热度时不展示为公司结论。'
   };
   return actions[theme];
@@ -181,18 +184,60 @@ function extractDiscoveryItems(html, source) {
   return items;
 }
 
+function extractJsonDiscoveryItems(payload, source) {
+  const items = [];
+  const rawItems = payload?.data?.items || payload?.data || payload?.items || [];
+  const list = Array.isArray(rawItems) ? rawItems : [];
+  for (const raw of list) {
+    const title = normalizeHotTitle(compactText(raw?.title || raw?.content_text || raw?.content || ''));
+    const href = raw?.uri || raw?.url || raw?.id ? `https://wallstreetcn.com/articles/${raw?.id}` : '';
+    if (!title || title.length < 4 || !isDiscoveryRelevant(title)) continue;
+    items.push({
+      id: `${source.id}-json-${items.length}`,
+      title,
+      source: source.source,
+      sourceUrl: href || source.url,
+      sourceLevel: source.sourceLevel,
+      industry: source.industry,
+      theme: discoveryTheme(title),
+      heat: Math.max(40, 86 - items.length * 3),
+      publishedAt: raw?.display_time ? new Date(raw.display_time * 1000).toISOString().slice(0, 10) : null,
+      confidence: '发现线索',
+      discoveryOnly: true,
+      desc: '实时财经与全球市场快讯只用于发现题材方向，不能替代政策原文、交易所公告或上市公司公告。',
+      verifyAction: discoveryActionFor(title),
+      counter: '快讯代表市场关注和题材热度，不代表政策力度、订单兑现或公司利润。'
+    });
+    if (items.length >= 8) break;
+  }
+  return items;
+}
+
 async function fetchDiscoverySignals(officialEvents) {
   const officialSignals = signalsFromOfficialEvents(officialEvents);
   const hotSignals = [];
   for (const source of discoverySources) {
     try {
-      const response = await fetch(source.url, { headers: { 'User-Agent': 'Mozilla/5.0 Research-Stock topic discovery', Accept: 'text/html,application/xhtml+xml' } });
+      const headers = { 'User-Agent': 'Mozilla/5.0 Research-Stock topic discovery', Accept: source.jsonMode ? 'application/json, text/plain, */*' : 'text/html,application/xhtml+xml' };
+      const response = await fetch(source.url, { headers });
       if (!response.ok) continue;
-      const html = decodeBuffer(await response.arrayBuffer(), response.headers.get('content-type') || '');
-      hotSignals.push(...extractDiscoveryItems(html, source).slice(0, 5));
+      if (source.jsonMode) {
+        const payload = await response.json();
+        hotSignals.push(...extractJsonDiscoveryItems(payload, source).slice(0, 8));
+      } else {
+        const html = decodeBuffer(await response.arrayBuffer(), response.headers.get('content-type') || '');
+        const items = extractDiscoveryItems(html, source);
+        const matched = source.matching ? items.filter((item) => source.matching.some((pattern) => item.sourceUrl.includes(pattern))) : items;
+        hotSignals.push(...((matched.length ? matched : items)).slice(0, 8));
+      }
     } catch {}
   }
-  return dedupeSignals([...officialSignals, ...hotSignals]).slice(0, 12);
+  const mediaSignals = hotSignals
+    .filter((signal) => ['第一财经', '华尔街见闻'].includes(signal.source))
+    .sort((a, b) => Number((b.heat || 0)) - Number((a.heat || 0)));
+  const otherSignals = dedupeSignals(hotSignals.filter((signal) => !['第一财经', '华尔街见闻'].includes(signal.source)));
+  const prioritized = dedupeSignals([...mediaSignals, ...otherSignals]);
+  return dedupeSignals([...prioritized, ...officialSignals]).slice(0, 24);
 }
 
 
